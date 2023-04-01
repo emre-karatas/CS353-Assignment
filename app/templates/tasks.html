@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Main Page</title>
+	<head>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	
+	<!-- Bootstrap JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<style>
+			body 
+			{
+				background-color: purple;
+			}
+			.container 
+			{
+				text-align: center;
+				color: white;
+			}
+			.title
+			{
+				color:white;
+				text-align: center;
+
+			}
+            .list-container
+			{
+				color:white;
+				text-align: left;
+
+			}
+			.task-container
+			{
+				color:purple;
+				text-align: left;
+				background-color: white;
+
+			}
+	</style>
+</head>
+<body>
+	<div class="container">
+			<nav class="navbar">
+				<h3 class="navbar-brand">EasyDo</h3>
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<form action="{{ url_for('analysis') }}" method="get">
+							<button class="btn btn-primary nav-link btn-block">Go to analysis</button>
+						</form>
+					</li>
+					<li class="nav-item">
+						<form action="{{ url_for('logout') }}" method="get">
+							<button class="btn btn-primary nav-link btn-block">Log out</button>
+						</form>
+					</li>
+				</ul>
+			</nav>
+	</div>
+<div class="title">
+	<h3>Welcome {{ session.username }} !</h3>
+</div>
+<div class="list-container">
+
+                {% if tasks %}
+                <div class="task-list-container">
+                    <h2 class="list-title">Your tasks</h2>
+                    {% for task in tasks %}
+						<div class="task-container">
+                        {% if task.status == 'Todo' %}
+                            <div class="task-card">
+                                <div class="descrip">
+                                    <h3>{{ task.title }}</h3>
+                                    <p>{{ task.description }}</p>
+                                    <p><strong>Type:</strong> {{task.task_type}}</p>
+                                </div>
+                                <div>
+                                    <p>Deadline: {{ task.deadline }}</p>
+                                    <p>Creation: {{ task.creation_time }}</p>
+                                </div>
+                                <div class="buttons">
+                                    <a href="{{'delete/'+task.id|string}}" >Delete Task</a>
+                                    <a href="{{'complete/'+task.id|string}}" >Complete Task</a>
+                                    <a href="{{'select/'+task.id|string}}" >Update Task</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="task-card completed">
+                                <div class="descrip">
+                                    <h3>{{ task.title }}</h3>
+                                    <p>{{ task.description }}</p>
+                                    <p><strong>Type:</strong> {{task.task_type}}</p>
+                                </div>
+                                <div>
+                                    <p>Completed: {{ task.done_time }}</p>
+                                    <p>Deadline: {{ task.deadline }}</p>
+                                    <p>Creation: {{ task.creation_time }}</p>
+                                </div>
+                                <div class="buttons">
+                                    <a href="{{'delete/'+task.id|string}}" >Delete Task</a>
+                                    <a href="{{'uncomplete/'+task.id|string}}" >Uncomplete Task</a>
+                                    <a href="{{'select/'+task.id|string}}" >Update Task</a>
+                                </div>
+                            </div>
+                        {% endif %}
+						</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+</div>
+</body>
+</html>
