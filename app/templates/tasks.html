@@ -27,13 +27,13 @@
             .list-container
 			{
 				color:white;
-				text-align: left;
+				text-align: center;
 
 			}
 			.task-container
 			{
 				color:purple;
-				text-align: left;
+				text-align: center;
 				background-color: white;
 
 			}
@@ -67,27 +67,11 @@
                     <h2 class="list-title">Your tasks</h2>
                     {% for task in tasks %}
 						<div class="task-container">
-                        {% if task.status == 'Todo' %}
-                            <div class="task-card">
+                        {% if task.status == 'Done' %}
+							<div class="task-card completed">
                                 <div class="descrip">
-                                    <h3>{{ task.title }}</h3>
-                                    <p>{{ task.description }}</p>
-                                    <p><strong>Type:</strong> {{task.task_type}}</p>
-                                </div>
-                                <div>
-                                    <p>Deadline: {{ task.deadline }}</p>
-                                    <p>Creation: {{ task.creation_time }}</p>
-                                </div>
-                                <div class="buttons">
-                                    <a href="{{'delete/'+task.id|string}}" >Delete Task</a>
-                                    <a href="{{'complete/'+task.id|string}}" >Complete Task</a>
-                                    <a href="{{'select/'+task.id|string}}" >Update Task</a>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="task-card completed">
-                                <div class="descrip">
-                                    <h3>{{ task.title }}</h3>
+                                    <h2><strong>{{ task.title }}</strong></h2>
+									<h5><strong>Task Status: {{ task.status }}</strong></h5>
                                     <p>{{ task.description }}</p>
                                     <p><strong>Type:</strong> {{task.task_type}}</p>
                                 </div>
@@ -102,6 +86,25 @@
                                     <a href="{{'select/'+task.id|string}}" >Update Task</a>
                                 </div>
                             </div>
+                        {% else %}
+							<div class="task-card">
+                                <div class="descrip">
+                                    <h2><strong>{{ task.title }}</strong></h2>
+									<h5><strong>Task Status: {{ task.status }}</strong></h5>
+                                    <p>{{ task.description }}</p>
+                                    <p><strong>Type:</strong> {{task.task_type}}</p>
+                                </div>
+                                <div>
+                                    <p>Deadline: {{ task.deadline }}</p>
+                                    <p>Creation: {{ task.creation_time }}</p>
+                                </div>
+                                <div class="buttons">
+                                    <a href="{{'delete/'+task.id|string}}" >Delete Task</a>
+                                    <a href="{{'complete/'+task.id|string}}" >Complete Task</a>
+                                    <a href="{{'select/'+task.id|string}}" >Update Task</a>
+                                </div>
+                            </div>
+                            
                         {% endif %}
 						</div>
                     {% endfor %}
