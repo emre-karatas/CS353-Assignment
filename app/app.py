@@ -3,6 +3,7 @@ import re
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
+from datetime import datetime, timedelta
 import MySQLdb.cursors
 
 app = Flask(__name__) 
@@ -92,6 +93,35 @@ def logout():
     
     return redirect(url_for('login'))
 
+@app.route('/delete/<int:id>', methods =['GET'])
+def delete(id):
+    session['message'] = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if session['loggedin']:
+        cursor.execute('DELETE FROM Task WHERE id = %s;', (id,))
+        mysql.connection.commit()
+    return redirect(url_for('tasks'))
+
+@app.route('/uncomplete/<int:id>', methods =['GET'])
+def uncomplete(id):
+    session['message'] = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if session['loggedin']:
+        cursor.execute('UPDATE Task SET status="Todo", done_time=NULL WHERE id = %s;', (id,))
+        mysql.connection.commit()
+    return redirect(url_for('tasks'))
+
+@app.route('/complete/<int:id>', methods =['GET'])
+def complete(id):
+    session['messsage'] = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    now = datetime.now()
+    adjusted_time = now + timedelta(hours=3)
+    current_time = adjusted_time.strftime("%Y-%m-%d %H:%M:%S")
+    if session['loggedin']:
+        cursor.execute('UPDATE Task SET status= "Done", done_time=%s WHERE id = %s;', (current_time, id,))
+        mysql.connection.commit()
+    return redirect(url_for('tasks'))
 
 
 if __name__ == "__main__":
