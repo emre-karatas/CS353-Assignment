@@ -78,9 +78,32 @@ def tasks():
      types = cursor.fetchall()
      return render_template('tasks.html', tasks=tasks, completed=completed, session=session, types = types)
 
-@app.route('/analysis', methods =['GET', 'POST'])
+@app.route('/analysis', methods =['GET','POST'])
 def analysis():
-    return "Analysis page"
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    ##List the title and latency of the tasks that were completed after their deadlines (for the user).
+    cursor.execute("SELECT title, CONCAT(FLOOR(AVG(TIMESTAMPDIFF(SECOND, deadline, done_time)) / 86400), ' days ', FLOOR((AVG(TIMESTAMPDIFF(SECOND, deadline, done_time)) %% 86400) / 3600), ' hours') AS latencies FROM Task WHERE user_id = %s AND status = 'Done' AND TIMESTAMPDIFF(SECOND, deadline, done_time) > 0 GROUP BY title", (session['userid'],))
+    latency = cursor.fetchall()
+    ##Give the average task completion time of the user.
+    cursor.execute("SELECT CONCAT(FLOOR(AVG(TIMESTAMPDIFF(SECOND, creation_time, done_time)) / 86400), ' days ', FLOOR((AVG(TIMESTAMPDIFF(SECOND, creation_time, done_time)) %% 86400) / 3600), ' hours') AS avg_completion_time FROM Task WHERE user_id = %s AND status = 'Done'", (session['userid'],))
+    average_completion_time = cursor.fetchone()
+
+    ##List the number of the completed tasks per task type, in descending order (for the user).
+    cursor.execute("SELECT task_type, COUNT(*) AS count FROM Task WHERE user_id = %s AND status = 'Done' GROUP BY task_type ORDER BY COUNT(*) DESC",(session['userid'],))
+    task_counts = cursor.fetchall()
+
+    ##List the title and deadline of uncompleted tasks in increasing order of deadlines (for the user).
+    cursor.execute("SELECT title, deadline FROM Task WHERE user_id = %s AND status = 'Todo' ORDER BY deadline ASC",(session['userid'],))
+    uncompleted_tasks = cursor.fetchall()
+
+    ##List the title and task completion time of the top 2 completed tasks that took the most time, in descending order (for the user). (You can use the LIMIT clause).
+    cursor.execute("SELECT title, CONCAT(FLOOR(TIMESTAMPDIFF(SECOND, creation_time, done_time) / 86400), ' days ', FLOOR((TIMESTAMPDIFF(SECOND, creation_time, done_time) %% 86400) / 3600), ' hours') AS task_completion_time FROM Task WHERE user_id = %s AND status = 'Done' AND TIMESTAMPDIFF(SECOND, creation_time, done_time) > 0  ORDER BY TIMESTAMPDIFF(SECOND, creation_time, done_time) DESC LIMIT 2", (session['userid'],))
+    most_two_completed = cursor.fetchall()
+
+
+    return render_template('analysis.html', session=session, latency =latency, average_completion_time = average_completion_time , task_counts=task_counts, uncompleted_tasks = uncompleted_tasks, most_two_completed = most_two_completed)
 
 @app.route('/add_task', methods =['POST'])
 def add_task():
@@ -135,7 +158,7 @@ def add_task():
                 mysql.connection.commit()
                 message = 'Your task is successfully created!'
         else:
-            message = 'Please check the task information!'
+            message = 'Task rules should be checked!'
         
         session['message'] = message
     return redirect(url_for('tasks'))
