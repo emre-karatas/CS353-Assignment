@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Analysis Page</title>
+	<head>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	
+	<!-- Bootstrap JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<style>
+			body 
+			{
+				background-color: purple;
+			}
+			.container 
+			{
+				text-align: center;
+				color: white;
+			}
+			.title
+			{
+				color:white;
+				text-align: center;
+
+			}
+            .list-container
+			{
+				color:white;
+				text-align: center;
+
+			}
+			.task-container
+			{
+				color:purple;
+				text-align: center;
+				background-color: white;
+
+			}
+            .task-creating-container
+            {
+                color:purple;
+                text-align:center;
+                background-color:white;
+            }
+            .container-divider
+            {
+                background-color:purple;
+            }
+            .task-update-container
+            {
+                color:purple;
+                text-align:center;
+                background-color:white;
+            }
+	</style>
+</head>
+<body>
+<div class="container">
+			<nav class="navbar">
+				<h1 class="navbar-brand">EasyDo</h1>
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<form action="{{ url_for('tasks') }}" method="get">
+							<button class="btn btn-primary nav-link btn-block">Go to Tasks</button>
+						</form>
+					</li>
+					<li class="nav-item">
+						<form action="{{ url_for('logout') }}" method="get">
+							<button class="btn btn-primary nav-link btn-block">Log out</button>
+						</form>
+					</li>
+				</ul>
+			</nav>
+	</div>
+<div class="title">
+	<h1><strong>Task Analyses of  {{ session.username }}</strong></h1>
+	<h3 class="analysis-title">Latencies of tasks which are completed after their deadlines</h3>
+    <table class="table table-striped" style="text-align:center;background-color:white;color:purple;">
+    <thead>
+        <tr>
+        <th>Task</th>
+        <th>Latency</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ltcy in latency %}
+        <tr>
+            <td>{{ltcy.title}}</td>
+            <td>{{ltcy.latencies}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+	<h3 class="analysis-title">Average task completion time</h3>
+    <p>{{ average_completion_time['avg_completion_time'] }}</p>
+	<h3 class="analysis-title">Number of the completed tasks per task type</h3>
+    <table class="table table-striped" style="text-align:center;background-color:white;color:purple;">
+      <thead>
+        <tr>
+          <th>Task type</th>
+          <th>Number of tasks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in task_counts %}
+          <tr>
+            <td>{{task.task_type}}</td>
+            <td>{{task.count}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+	<h3 class="analysis-title">Title and deadline of uncompleted tasks</h3>
+    <table class="table table-striped" style="text-align:center;background-color:white;color:purple;">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Deadline</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%  for uncompleted in uncompleted_tasks %}
+          <tr>
+            <td>{{uncompleted.title}}</td>
+            <td>{{uncompleted.deadline}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h3 class="analysis-title">Title and task completion time of the top 2 completed tasks that took the most time</h3>
+    <table class="table table-striped" style="text-align:center;background-color:white;color:purple;">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Completion time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%  for tasks in most_two_completed %}
+          <tr>
+            <td>{{tasks.title}}</td>
+            <td>{{tasks.task_completion_time}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+</body>
+</html>
