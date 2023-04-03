@@ -82,6 +82,108 @@ def tasks():
 def analysis():
     return "Analysis page"
 
+@app.route('/add_task', methods =['POST'])
+def add_task():
+    session['message'] = ''
+    message = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if not session['loggedin']:
+        message = 'You are not logged in to the system!'
+    else:
+        if request.method == 'POST' and 'task_type' in request.form:
+            cursor.execute('SELECT * FROM TaskType WHERE type = % s', (request.form['task_type'], ))
+            type = cursor.fetchone()
+            if not type:
+                message = 'Task type is not valid!'
+        if request.form['title'] == '':
+            message = 'Title cannot be empty!'
+        elif request.form['deadline_date'] == '':
+            message = 'Deadline date cannot be empty!'
+        elif request.form['deadline_time'] == '':
+            message = 'Deadline time cannot be empty!'
+        elif request.method == 'POST' and 'title' in request.form and 'description' in request.form and 'deadline_time' in request.form and 'deadline_date' in request.form and 'task_type' in request.form:
+            now = datetime.now()
+            adjusted_time = now + timedelta(hours=3)
+            current_time = adjusted_time.strftime("%Y-%m-%d %H:%M:%S")
+            deadline = request.form['deadline_date'] + ' ' + request.form['deadline_time']
+
+            if deadline < current_time:
+                message = 'Deadline cannot be before current time!'
+            else:
+                cursor.execute('''
+                INSERT INTO Task(
+                    title,
+                    description,
+                    status,
+                    deadline,
+                    creation_time,
+                    done_time,
+                    user_id,  
+                    task_type
+                ) VALUES(
+                    %s,
+                    %s,
+                    'Todo',
+                    %s,
+                    %s,
+                    NULL,
+                    %s,
+                    %s
+                );
+                ''', (request.form['title'],request.form['description'],deadline,current_time,session['userid'],request.form['task_type'],))
+
+                mysql.connection.commit()
+                message = 'Your task is successfully created!'
+        else:
+            message = 'Please check the task information!'
+        
+        session['message'] = message
+    return redirect(url_for('tasks'))
+
+@app.route('/update', methods =['POST'])
+def update():
+    message = ''
+    session['message'] = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    if session['loggedin'] and 'title' in request.form and 'description' in request.form and 'task_type' in request.form and 'deadline_time' in request.form and 'deadline_date' in request.form:
+        if request.form['title'] == '':
+            message = 'Title cannot be empty!'
+        elif request.form['deadline_date'] == '':
+            message = 'Deadline date cannot be empty!'
+        elif request.form['deadline_time'] == '':
+            message = 'Deadline time cannot be empty!'
+        else:
+            cursor.execute('UPDATE Task SET title=%s WHERE id=%s;', (request.form['title'], session['selected']['id'],))
+            cursor.execute('UPDATE Task SET description = %s WHERE id = %s;', (request.form['description'],session['selected']['id'],))
+            cursor.execute('UPDATE Task SET task_type = %s WHERE id = %s;', (request.form['task_type'],session['selected']['id'],))
+            deadline = request.form['deadline_date'] + ' ' + request.form['deadline_time']
+            cursor.execute('UPDATE Task SET deadline = %s WHERE id = %s;', (deadline,session['selected']['id'],))
+            mysql.connection.commit()
+            session['selected'] = None
+            message = "Task updated successfully!"
+    session['message'] = message
+    
+    return redirect(url_for('tasks'))
+
+@app.route('/select/<int:id>', methods =['GET'])
+def select(id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    cursor.execute('SELECT * FROM Task WHERE id = %s;', (id,))
+    task = cursor.fetchone()
+    
+    session['selected'] = task
+    
+    return redirect(url_for('tasks'))
+
+@app.route('/cancel', methods =['GET'])
+def cancel():
+    session['selected'] = None
+    
+    return redirect(url_for('tasks'))
+
+
 @app.route('/logout', methods =['GET'])
 def logout():
     session['loggedin'] = False
