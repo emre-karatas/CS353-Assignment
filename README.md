@@ -1,4 +1,6 @@
 
+GRADE: 96
+
 In this assignment, you will implement a web application using Python, Flask, MySQL, and Docker Compose. The web application you will develop is a generic Todo-list application where users can manage their todo list.
 
 
