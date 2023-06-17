@@ -1,19 +1,43 @@
+# Project Grade: A+ (96)
 
-GRADE: 96
+## Project: Todo-list Web Application
 
-In this assignment, you will implement a web application using Python, Flask, MySQL, and Docker Compose. The web application you will develop is a generic Todo-list application where users can manage their todo list.
+### Overview
 
+In this project, you are tasked with crafting an elegant and efficient web application utilizing Python, Flask, MySQL, and Docker Compose. This will not be just any application, but a comprehensive, feature-rich Todo-list application that serves to manage tasks under varying categories such as health, employment, lifestyle, family, and hobbies.
 
-In this web application, the user can create tasks in different categories such as health, job, lifestyle, family, hobbies. The tasks need to have a deadline. The user can finish the task by marking the task as Done. The user can also delete or edit the task. You should provide a user registration page. Upon registration, the users can login via the login page by providing their username and password. After successful login, in the main page, you list the tasks of the user sorted by their deadline (the topmost should be the one with the closest deadline). You also show the completed tasks separately in this page, sorted by their completion time. In this page, allow the user to add a task, delete a task, edit a task, and finish a task. The following is an example database schema you can use to create the application. You should setup the primary and foreign keys yourself. You will create a file called the schema.sql.
-• User (id:int, password:varchar, username:varchar, email:varchar)
-• Task (id:int, title:varchar, description:text, status:varchar, deadline:datetime, creation_time:datetime, done_time: datetime, user_id: int, task_type:varchar)
-• TaskType (type: varchar)
-In the schema.sql, use the following tables to initially populate the database.
+### Key Features 
 
-You should also create an analysis page that could be reached from the main page, that lists various statistics about the task history of the user. You should use SQL queries (i.e., not python logic) to solve the following (query results will form the analysis page).
-1. List the title and latency of the tasks that were completed after their deadlines (for the user).
-2. Give the average task completion time of the user.
-3. List the number of the completed tasks per task type, in descending order (for the user).
-4. List the title and deadline of uncompleted tasks in increasing order of deadlines (for the user).
-5. List the title and task completion time of the top 2 completed tasks that took the most time, in descending order (for the user). (You can use the LIMIT clause).
-Finally, implement the logout function.
+#### Task Management
+Each task will be time-bound, marked with a deadline, and will provide options to denote completion ("Done"). Users will have the flexibility to edit and delete tasks as they see fit. 
+
+#### User Registration & Authentication
+The application will feature a dedicated registration page where new users can create an account. Registered users can then log in through the login page by providing their unique username and password. 
+
+#### User Dashboard
+Upon successful login, the main page will greet the user with their tasks, sorted according to the proximity of their deadlines. The completed tasks will also find a special mention on this page, ordered by their completion time. Here, users can add, delete, modify, and mark tasks as finished.
+
+### Database Schema
+Below is a suggested database schema for the application. You are required to set up the primary and foreign keys yourself. A `schema.sql` file should encapsulate this information:
+
+- **User** `(id:int, password:varchar, username:varchar, email:varchar)`
+- **Task** `(id:int, title:varchar, description:text, status:varchar, deadline:datetime, creation_time:datetime, done_time: datetime, user_id: int, task_type:varchar)`
+- **TaskType** `(type: varchar)`
+
+Initially populate the database using these tables in your `schema.sql`.
+
+### Analysis Page
+From the main page, users should have the ability to access an "Analysis" page, presenting insightful statistics about their task history. 
+
+Ensure to derive these insights using SQL queries and not Python logic. This page will present the following analytics:
+
+1. Display the title and latency of the tasks completed after their deadlines.
+2. Compute and display the user's average task completion time.
+3. Enumerate the number of completed tasks per task type, in descending order.
+4. Show the title and deadline of uncompleted tasks in ascending order of their deadlines.
+5. Showcase the title and task completion time of the top two completed tasks that took the most time, in descending order (Use the LIMIT clause).
+
+### User Logout
+Finally, ensure to implement a secure and effective user logout function.
+
+This project presents an opportunity for you to showcase your ability to develop a full-fledged web application. It will challenge and thereby refine your skills in Python, Flask, MySQL, and Docker Compose, all while building something functional and meaningful. Enjoy your coding journey!
